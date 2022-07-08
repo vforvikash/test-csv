@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/sample")
 public class CsvDownloadSample {
+
+    public static final MediaType CSV_MEDIA_TYPE = new MediaType("text", "csv", Charset.forName("utf-8"));
 
     @Autowired private CsvDataRepository repository;
 
@@ -24,7 +28,8 @@ public class CsvDownloadSample {
         return "Hello World!";
     }
 
-    @GetMapping(value = "/download", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "/download",
+        produces = "text/csv;charset=utf-8")
     public Flux<String> getCsvFile() {
         return Flux.just(new CsvData("Number", "Name"))
                 .concatWith(repository.getCsvData())
